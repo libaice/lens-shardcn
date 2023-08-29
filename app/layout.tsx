@@ -13,6 +13,7 @@ import { usePathname } from "next/navigation";
 import { ThemeProvider } from "@/components/theme-provider";
 import LensProvider from "./lens-provider";
 import { WalletProvider } from "./WalletProvider";
+import { ModelToggle } from "@/components/dropdown";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -35,13 +36,41 @@ function AppWithProviders({ children }: { children: React.ReactNode }) {
 function Nav() {
   const { open, close } = useWeb3Modal();
   const { address } = useAccount();
+  const pathname = usePathname();
 
   return (
-    <nav>
-      <div>
-        <Link href="/" className="">
-          <Droplets />
+    <nav className="border-b flex flex-col sm:flex-row items-start sm:items-center sm:pr-10">
+      <div className="py-3 px-8 flex flex-1 items-center p">
+        <Link href="/" className="mr-5 flex items-center">
+          <Droplets className="opacity-85" size={19} />
+          <p className={`ml-2 mr-4 text-lg font-semibold`}>lenscn</p>
         </Link>
+        <Link
+          href="/"
+          className={`mr-2 text-sm ${pathname != "/" && "opacity-50"}`}
+        >
+          Home
+        </Link>
+        <Link
+          href="/search"
+          className={`mr-5 text-sm ${pathname !== "/search" && "opacity-60"}`}
+        >
+          Search
+        </Link>
+      </div>
+
+      <div className="flex sm:items-center pl-8 pb-3 sm:p-0 ">
+        {!address && (
+          <Button onClick={open} variant="secondary" className="mr-4">
+            Sign In <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
+        {address && (
+          <Button onClick={disconnect} variant="secondary" className="mr-4">
+            <ChevronRight className="h-4 w-4 ml-3" /> Sign Out
+          </Button>
+        )}
+        <ModelToggle />
       </div>
     </nav>
   );
@@ -54,9 +83,5 @@ export default function RootLayout({ children, ...props }) {
         <WalletProvider>{children}</WalletProvider>
       </AppWithProviders>
     </LensProvider>
-
-    // <html lang="en">
-    //   <body className={inter.className}>{children}</body>
-    // </html>
   );
 }
