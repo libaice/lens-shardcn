@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -27,6 +28,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
+  const [view, setView] = useState("profiles");
+  const [dashboardType, setDashboardType] = useState("dashboard");
+
   return (
     <main className="px-6 py-14 sm:px-10">
       <div>
@@ -50,13 +54,54 @@ export default function Home() {
             target="_blank"
             rel="no-opener"
             href="https://aave.notion.site/08521d6d8ec84d10bf0f6d03abcf60cc?v=eb989b589d7447918187bf3c588a2748&pvs=4"
-            className={buttonVariants({variant:"outline"})}
+            className={buttonVariants({ variant: "outline" })}
           >
-            <Globe className="h-4 w-5 mr-2"  />
+            <Globe className="h-4 w-5 mr-2" />
             Expoore lens Apps
           </a>
         </div>
       </div>
+
+      <div className="mt-[70px] flex ml-2">
+        <div>
+          <Button
+            variant="ghost"
+            onClick={() => setDashboardType("dashboard")}
+            className={`${dashboardType !== "dashboard" ? "opacity-60" : ""}`}
+          >
+            My DashBoard
+          </Button>
+
+          <Button
+            variant="ghost"
+            onClick={() => setDashboardType("algorithms")}
+            className={`${
+              dashboardType !== "recommendation algorithms" ? "opacity-50" : ""
+            }`}
+          >
+            Choose Your Algorithms
+          </Button>
+        </div>
+      </div>
+
+      {dashboardType === "algorithms" && (
+        <div className="md:flex min-h-[300px] mt-3 px-6">
+          <p>Choose your algorithms comming soon </p>
+        </div>
+      )}
+
+      {dashboardType === "dashboard" &&
+      
+        (
+          <div className="md:flex min-h-[300px] mt-3" >
+            <div>
+              <p>Social views</p>
+
+            </div>
+          </div>
+
+        )
+      }
     </main>
   );
 }
