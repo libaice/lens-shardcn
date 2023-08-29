@@ -23,6 +23,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
@@ -45,10 +46,15 @@ export default function Home() {
 
         <div className="mt-6 flex">
           <button>Share</button>
-          {/* <a target="_blank" rel="no-opener" href="https://aave.notion.site/08521d6d8ec84d10bf0f6d03abcf60cc?v=eb989b589d7447918187bf3c588a2748&pvs=4" className={buttonVari} >
-            <Globe className="h-4 w-4"   />
+          <a
+            target="_blank"
+            rel="no-opener"
+            href="https://aave.notion.site/08521d6d8ec84d10bf0f6d03abcf60cc?v=eb989b589d7447918187bf3c588a2748&pvs=4"
+            className={buttonVariants({variant:"outline"})}
+          >
+            <Globe className="h-4 w-5 mr-2"  />
             Expoore lens Apps
-          </a> */}
+          </a>
         </div>
       </div>
     </main>
