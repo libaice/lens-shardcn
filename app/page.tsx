@@ -30,6 +30,15 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   const [view, setView] = useState("profiles");
   const [dashboardType, setDashboardType] = useState("dashboard");
+  let {
+    data: profiles,
+    error: profileError,
+    loading: loadingProfiles,
+  } = useExploreProfiles({
+    limit: 50,
+  }) as any;
+
+  profiles = profiles?.filter((p) => p.picture?.original?.url);
 
   return (
     <main className="px-6 py-14 sm:px-10">
@@ -90,18 +99,84 @@ export default function Home() {
         </div>
       )}
 
-      {dashboardType === "dashboard" &&
-      
-        (
-          <div className="md:flex min-h-[300px] mt-3" >
-            <div>
-              <p>Social views</p>
+      {dashboardType === "dashboard" && (
+        <div className="md:flex min-h-[300px] mt-3">
+          <div className="border border rounded-tl rounded-bl md:w-[230px] pt-3 pb-8 flex-col flex">
+            <p className="font-medium ml-4 mb-2 mt-1">Social views</p>
+            <Button
+              onClick={() => setView("profiles")}
+              variant={view === "profiles" ? "secondary" : "ghost"}
+              className="justify-start mb-1"
+            >
+              <PersonStanding size={16} />
+              <p className="text-sm ml-2">Profiles</p>
+            </Button>
 
-            </div>
+            <Button
+              onClick={() => setView("publications")}
+              variant={view === "publications" ? "secondary" : "ghost"}
+              className="justify-start mb-1"
+            >
+              <Newspaper size={16} />
+              <p className="text-sm ml-2">Publications</p>
+            </Button>
+
+            <Button
+              onClick={() => setView("music")}
+              variant={view === "music" ? "secondary" : "ghost"}
+              className="justify-start mb-1"
+            >
+              <ListMusic size={16} />
+              <p className="text-sm ml-2">Music</p>
+            </Button>
+
+            <Button
+              onClick={() => setView("collect")}
+              variant={view === "collect" ? "secondary" : "ghost"}
+              className="justify-start mb-1"
+            >
+              <Shapes size={16} />
+              <p className="text-sm ml-2">Collect</p>
+            </Button>
           </div>
 
-        )
-      }
+          <div className="">
+            {view === "profiles" && (
+              <div>
+                {loadingProfiles && (
+                  <div>
+                    <Loader2></Loader2>
+                  </div>
+                )}
+   
+                {profiles?.map((profile) => (
+                  <a
+                    key={profile.id}
+                    className=" lg:w-1/4 sm:w-1/2 p-4 cursor-pointer"
+                    rel="no-opener"
+                    target="_blank"
+                    href={`https://share.lens.xyz/u/${profile.handle}`}
+                  >
+                    <div className="space-y-3" >
+                      <div className="overflow-hidden rounded-md">
+                        <img alt="Thinking Components" loading="lazy" decoding="async" data-nimg="1" src={profile.picture?.original?.url}></img>
+                        <h3>Hello</h3>
+                        <p></p>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+
+
+                
+              </div>
+            )}
+
+            {view === "publications" && <></>}
+            {view === "music" && <></>}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
