@@ -63,14 +63,18 @@ export default function Home() {
     return true;
   });
 
-  let { data: musicPubs, error: musicPubError, loading: loadingMusicPubs } = useExplorePublications({
+  let {
+    data: musicPubs,
+    error: musicPubError,
+    loading: loadingMusicPubs,
+  } = useExplorePublications({
     limit: 25,
     sortCriteria: PublicationSortCriteria.CuratedProfiles,
     publicationTypes: [PublicationTypes.Post],
     metadataFilter: {
-      restrictPublicationMainFocusTo: [PublicationMainFocus.Audio]
-    }
-  }) as any
+      restrictPublicationMainFocusTo: [PublicationMainFocus.Audio],
+    },
+  }) as any;
 
   return (
     <main className="px-6 py-14 sm:px-10">
@@ -110,9 +114,10 @@ export default function Home() {
             onClick={() => setDashboardType("dashboard")}
             className={`${dashboardType !== "dashboard" ? "opacity-60" : ""}`}
           >
-            My DashBoard
+            My dashboard
           </Button>
-
+        </div>
+        <div className="ml-4">
           <Button
             variant="ghost"
             onClick={() => setDashboardType("algorithms")}
@@ -120,7 +125,7 @@ export default function Home() {
               dashboardType !== "recommendation algorithms" ? "opacity-50" : ""
             }`}
           >
-            Choose Your Algorithms
+            Choose your algorithm
           </Button>
         </div>
       </div>
@@ -133,8 +138,8 @@ export default function Home() {
 
       {dashboardType === "dashboard" && (
         <div className="md:flex min-h-[300px] mt-3">
-          <div className="border border rounded-tl rounded-bl md:w-[230px] pt-3 pb-8 flex-col flex">
-            <p className="font-medium ml-4 mb-2 mt-1">Social views</p>
+          <div className="border border rounded-tl rounded-bl md:w-[230px] pt-3 px-2 pb-8 flex-col flex">
+            <p className="font-medium ml-4 mb-2 mt-1">Social Views</p>
             <Button
               onClick={() => setView("profiles")}
               variant={view === "profiles" ? "secondary" : "ghost"}
@@ -143,7 +148,6 @@ export default function Home() {
               <PersonStanding size={16} />
               <p className="text-sm ml-2">Profiles</p>
             </Button>
-
             <Button
               onClick={() => setView("publications")}
               variant={view === "publications" ? "secondary" : "ghost"}
@@ -152,7 +156,6 @@ export default function Home() {
               <Newspaper size={16} />
               <p className="text-sm ml-2">Publications</p>
             </Button>
-
             <Button
               onClick={() => setView("music")}
               variant={view === "music" ? "secondary" : "ghost"}
@@ -161,7 +164,6 @@ export default function Home() {
               <ListMusic size={16} />
               <p className="text-sm ml-2">Music</p>
             </Button>
-
             <Button
               onClick={() => setView("collect")}
               variant={view === "collect" ? "secondary" : "ghost"}
@@ -171,20 +173,27 @@ export default function Home() {
               <p className="text-sm ml-2">Collect</p>
             </Button>
           </div>
-
-          <div className=" sm:border-t sm:border-r sm:border-b rounded-tr rounded-br flex flex-1 pb-4">
+          <div
+            className="
+          sm:border-t sm:border-r sm:border-b
+          rounded-tr rounded-br flex flex-1 pb-4"
+          >
             {view === "profiles" && (
               <div className="flex flex-1 flex-wrap p-4">
                 {loadingProfiles && (
-                  <div className="flex flex-1 justify-center items-center">
-                    <Loader2 className="h-12 w-12 animate-spin"></Loader2>
+                  <div
+                    className="
+                      flex flex-1 justify-center items-center
+                    "
+                  >
+                    <Loader2 className="h-12 w-12 animate-spin" />
                   </div>
                 )}
-
                 {profiles?.map((profile) => (
                   <a
                     key={profile.id}
-                    className=" lg:w-1/4 sm:w-1/2 p-4 cursor-pointer"
+                    className="
+                      lg:w-1/4 sm:w-1/2 p-4 cursor-pointer"
                     rel="no-opener"
                     target="_blank"
                     href={`https://share.lens.xyz/u/${profile.handle}`}
@@ -196,8 +205,11 @@ export default function Home() {
                           loading="lazy"
                           decoding="async"
                           data-nimg="1"
+                          className="h-auto w-auto object-cover transition-all hover:scale-105 aspect-square"
                           src={profile.picture?.original?.url}
-                        ></img>
+                        />
+                      </div>
+                      <div className="space-y-1 text-sm">
                         <h3 className="font-medium leading-none">
                           {profile.handle}
                         </h3>
@@ -312,62 +324,89 @@ export default function Home() {
                 ))}
               </div>
             )}
-            {
-                  musicPubs?.map(publication => (
-                    <a target="_blank" rel-no-opener className="border-b " key={publication.id} href={`https://share.lens.xyz/p/${publication.id}`}>
-                      <div className="space-y-3 mb-4 p-4">
-                        <div className="flex">
-                          <Avatar>
-                            <AvatarImage src={publication.profile?.picture?.original?.url} />
-                            <AvatarFallback>{publication.profile.handle.slice(0, 2)}</AvatarFallback>
-                          </Avatar>
-                          <div className="ml-4">
-                              <h3 className="mb-1 font-medium leading-none">{publication.profile.handle}</h3>
-                            <p className="text-xs text-muted-foreground">{publication.profile.name}</p>
-                          </div>
-                        </div>
-                        <div>
-                          <img
-                             className={cn(`
+            {view === "music" &&
+              musicPubs?.map((publication) => (
+                <a
+                  target="_blank"
+                  rel-no-opener
+                  className="border-b "
+                  key={publication.id}
+                  href={`https://share.lens.xyz/p/${publication.id}`}
+                >
+                  <div className="space-y-3 mb-4 p-4">
+                    <div className="flex">
+                      <Avatar>
+                        <AvatarImage
+                          src={publication.profile?.picture?.original?.url}
+                        />
+                        <AvatarFallback>
+                          {publication.profile.handle.slice(0, 2)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="ml-4">
+                        <h3 className="mb-1 font-medium leading-none">
+                          {publication.profile.handle}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {publication.profile.name}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <img
+                        className={cn(`
                              max-w-full sm:max-w-[500px]
                              rounded-2xl h-auto object-cover transition-all hover:scale-105
                              `)}
-                            src={publication.__typename === 'Post' ? publication.metadata?.media[0]?.original.cover?.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/') : ''}
-                          />
-                          <audio controls>
-                            <source
-                              type={publication.metadata?.media[0]?.original?.mimeType}
-                              src={publication.metadata?.media[0]?.original?.url}
-                            />
-                          </audio>
-                          <ReactMarkdown className="
+                        src={
+                          publication.__typename === "Post"
+                            ? publication.metadata?.media[0]?.original.cover?.replace(
+                                "ipfs://",
+                                "https://cloudflare-ipfs.com/ipfs/"
+                              )
+                            : ""
+                        }
+                      />
+                      <audio controls>
+                        <source
+                          type={
+                            publication.metadata?.media[0]?.original?.mimeType
+                          }
+                          src={publication.metadata?.media[0]?.original?.url}
+                        />
+                      </audio>
+                      <ReactMarkdown
+                        className="
                           mt-4 break-words
-                          ">
-                            {publication.metadata.content.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '[LINK]($1)')}
-                          </ReactMarkdown>
-                        </div>
-                        <div>
-                          <Button className="rounded-full mr-1"  variant="secondary" >
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            {publication.stats.totalAmountOfComments}
-                          </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Repeat2 className="mr-2 h-4 w-4" />
-                            {publication.stats.totalAmountOfMirrors}
-                          </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Heart className="mr-2 h-4 w-4" />
-                            {publication.stats.totalUpvotes}
-                          </Button>
-                          <Button className="rounded-full mr-1" variant="secondary">
-                            <Grab className="mr-2 h-4 w-4" />
-                            {publication.stats.totalAmountOfCollects}
-                          </Button>
-                        </div>
-                      </div>
-                    </a>
-                  ))
-                }
+                          "
+                      >
+                        {publication.metadata.content.replace(
+                          /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,
+                          "[LINK]($1)"
+                        )}
+                      </ReactMarkdown>
+                    </div>
+                    <div>
+                      <Button className="rounded-full mr-1" variant="secondary">
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        {publication.stats.totalAmountOfComments}
+                      </Button>
+                      <Button className="rounded-full mr-1" variant="secondary">
+                        <Repeat2 className="mr-2 h-4 w-4" />
+                        {publication.stats.totalAmountOfMirrors}
+                      </Button>
+                      <Button className="rounded-full mr-1" variant="secondary">
+                        <Heart className="mr-2 h-4 w-4" />
+                        {publication.stats.totalUpvotes}
+                      </Button>
+                      <Button className="rounded-full mr-1" variant="secondary">
+                        <Grab className="mr-2 h-4 w-4" />
+                        {publication.stats.totalAmountOfCollects}
+                      </Button>
+                    </div>
+                  </div>
+                </a>
+              ))}
           </div>
         </div>
       )}
