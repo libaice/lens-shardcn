@@ -3,7 +3,7 @@ import * as AvaterPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
 
-const Avater = React.forwardRef<
+const Avatar = React.forwardRef<
   React.ElementRef<typeof AvaterPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvaterPrimitive.Root>
 >(({ className, ...props }, ref) => (
@@ -17,9 +17,9 @@ const Avater = React.forwardRef<
   />
 ));
 
-Avater.displayName = AvaterPrimitive.Root.displayName;
+Avatar.displayName = AvaterPrimitive.Root.displayName;
 
-const AvaterImage = React.forwardRef<
+const AvatarImage = React.forwardRef<
   React.ElementRef<typeof AvaterPrimitive.Image>,
   React.ComponentPropsWithoutRef<typeof AvaterPrimitive.Image>
 >(({ className, ...props }, ref) => (
@@ -30,9 +30,9 @@ const AvaterImage = React.forwardRef<
   />
 ));
 
-AvaterImage.displayName = AvaterPrimitive.Image.displayName;
+AvatarImage.displayName = AvaterPrimitive.Image.displayName;
 
-const AvaterFallback = React.forwardRef<
+const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvaterPrimitive.Fallback>,
   React.ComponentPropsWithoutRef<typeof AvaterPrimitive.Fallback>
 >(({ className, ...props }, ref) => (
@@ -46,6 +46,6 @@ const AvaterFallback = React.forwardRef<
   />
 ));
 
-AvaterFallback.displayName = AvaterPrimitive.Fallback.displayName;
+AvatarFallback.displayName = AvaterPrimitive.Fallback.displayName;
 
-export { Avater, AvaterImage, AvaterFallback };
+export { Avatar, AvatarImage, AvatarFallback };

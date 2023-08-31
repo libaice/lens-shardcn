@@ -26,6 +26,8 @@ import {
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avater";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
   const [view, setView] = useState("profiles");
@@ -38,7 +40,37 @@ export default function Home() {
     limit: 50,
   }) as any;
 
+  let {
+    data: publications,
+    error: pubError,
+    loading: loadingPubs,
+  } = useExplorePublications({
+    limit: 25,
+    sortCriteria: PublicationSortCriteria.CuratedProfiles,
+    publicationTypes: [PublicationTypes.Post],
+    metadataFilter: {
+      restrictPublicationMainFocusTo: [PublicationMainFocus.Image],
+    },
+  }) as any;
+
   profiles = profiles?.filter((p) => p.picture?.original?.url);
+
+  publications = publications?.filter((p) => {
+    if (p.metadata && p.metadata.media[0]) {
+      if (p.metadata.media[0].original.mimeType.includes("image")) return true;
+      return false;
+    }
+    return true;
+  });
+
+  let { data: musicPubs, error: musicPubError, loading: loadingMusicPubs } = useExplorePublications({
+    limit: 25,
+    sortCriteria: PublicationSortCriteria.CuratedProfiles,
+    publicationTypes: [PublicationTypes.Post],
+    metadataFilter: {
+      restrictPublicationMainFocusTo: [PublicationMainFocus.Audio]
+    }
+  }) as any
 
   return (
     <main className="px-6 py-14 sm:px-10">
@@ -140,15 +172,15 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="">
+          <div className=" sm:border-t sm:border-r sm:border-b rounded-tr rounded-br flex flex-1 pb-4">
             {view === "profiles" && (
-              <div>
+              <div className="flex flex-1 flex-wrap p-4">
                 {loadingProfiles && (
-                  <div>
-                    <Loader2></Loader2>
+                  <div className="flex flex-1 justify-center items-center">
+                    <Loader2 className="h-12 w-12 animate-spin"></Loader2>
                   </div>
                 )}
-   
+
                 {profiles?.map((profile) => (
                   <a
                     key={profile.id}
@@ -157,23 +189,185 @@ export default function Home() {
                     target="_blank"
                     href={`https://share.lens.xyz/u/${profile.handle}`}
                   >
-                    <div className="space-y-3" >
+                    <div className="space-y-3">
                       <div className="overflow-hidden rounded-md">
-                        <img alt="Thinking Components" loading="lazy" decoding="async" data-nimg="1" src={profile.picture?.original?.url}></img>
-                        <h3>Hello</h3>
-                        <p></p>
+                        <img
+                          alt="Thinking Components"
+                          loading="lazy"
+                          decoding="async"
+                          data-nimg="1"
+                          src={profile.picture?.original?.url}
+                        ></img>
+                        <h3 className="font-medium leading-none">
+                          {profile.handle}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {profile.name}
+                        </p>
                       </div>
                     </div>
                   </a>
                 ))}
-
-
-                
               </div>
             )}
 
-            {view === "publications" && <></>}
-            {view === "music" && <></>}
+            {view === "publications" && (
+              <div className="flex flex-1 flex-wrap flex-col">
+                {loadingPubs && (
+                  <div
+                    className="
+                      flex flex-1 justify-center items-center
+                    "
+                  >
+                    <Loader2 className="h-12 w-12 animate-spin" />
+                  </div>
+                )}
+                {publications?.map((publication) => (
+                  <a
+                    target="_blank"
+                    rel-no-opener
+                    className="border-b"
+                    key={publication.id}
+                    href={`https://share.lens.xyz/p/${publication.id}`}
+                  >
+                    <div
+                      className="
+                      space-y-3 mb-4 pt-6 pb-2
+                      sm:px-6 px-2
+                      "
+                    >
+                      <div className="flex">
+                        <Avatar>
+                          <AvatarImage
+                            src={publication.profile?.picture?.original?.url}
+                          />
+                          <AvatarFallback>
+                            {publication.profile.handle.slice(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="ml-4">
+                          <h3 className="mb-1 font-medium leading-none">
+                            {publication.profile.handle}
+                          </h3>
+                          <p className="text-xs text-muted-foreground">
+                            {publication.profile.name}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <img
+                          className={cn(`
+                            max-w-full sm:max-w-[500px]
+                            rounded-2xl h-auto object-cover transition-all hover:scale-105
+                            `)}
+                          src={
+                            publication.__typename === "Post"
+                              ? publication.metadata?.media[0]?.original.url
+                              : ""
+                          }
+                        />
+                        <ReactMarkdown
+                          className="
+                          mt-4 break-words
+                          "
+                        >
+                          {publication.metadata.content.replace(
+                            /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi,
+                            "[LINK]($1)"
+                          )}
+                        </ReactMarkdown>
+                      </div>
+                      <div>
+                        <Button
+                          className="rounded-full mr-1"
+                          variant="secondary"
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          {publication.stats.totalAmountOfComments}
+                        </Button>
+                        <Button
+                          className="rounded-full mr-1"
+                          variant="secondary"
+                        >
+                          <Repeat2 className="mr-2 h-4 w-4" />
+                          {publication.stats.totalAmountOfMirrors}
+                        </Button>
+                        <Button
+                          className="rounded-full mr-1"
+                          variant="secondary"
+                        >
+                          <Heart className="mr-2 h-4 w-4" />
+                          {publication.stats.totalUpvotes}
+                        </Button>
+                        <Button
+                          className="rounded-full mr-1"
+                          variant="secondary"
+                        >
+                          <Grab className="mr-2 h-4 w-4" />
+                          {publication.stats.totalAmountOfCollects}
+                        </Button>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+            {
+                  musicPubs?.map(publication => (
+                    <a target="_blank" rel-no-opener className="border-b " key={publication.id} href={`https://share.lens.xyz/p/${publication.id}`}>
+                      <div className="space-y-3 mb-4 p-4">
+                        <div className="flex">
+                          <Avatar>
+                            <AvatarImage src={publication.profile?.picture?.original?.url} />
+                            <AvatarFallback>{publication.profile.handle.slice(0, 2)}</AvatarFallback>
+                          </Avatar>
+                          <div className="ml-4">
+                              <h3 className="mb-1 font-medium leading-none">{publication.profile.handle}</h3>
+                            <p className="text-xs text-muted-foreground">{publication.profile.name}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <img
+                             className={cn(`
+                             max-w-full sm:max-w-[500px]
+                             rounded-2xl h-auto object-cover transition-all hover:scale-105
+                             `)}
+                            src={publication.__typename === 'Post' ? publication.metadata?.media[0]?.original.cover?.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/') : ''}
+                          />
+                          <audio controls>
+                            <source
+                              type={publication.metadata?.media[0]?.original?.mimeType}
+                              src={publication.metadata?.media[0]?.original?.url}
+                            />
+                          </audio>
+                          <ReactMarkdown className="
+                          mt-4 break-words
+                          ">
+                            {publication.metadata.content.replace(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, '[LINK]($1)')}
+                          </ReactMarkdown>
+                        </div>
+                        <div>
+                          <Button className="rounded-full mr-1"  variant="secondary" >
+                            <MessageSquare className="mr-2 h-4 w-4" />
+                            {publication.stats.totalAmountOfComments}
+                          </Button>
+                          <Button className="rounded-full mr-1" variant="secondary">
+                            <Repeat2 className="mr-2 h-4 w-4" />
+                            {publication.stats.totalAmountOfMirrors}
+                          </Button>
+                          <Button className="rounded-full mr-1" variant="secondary">
+                            <Heart className="mr-2 h-4 w-4" />
+                            {publication.stats.totalUpvotes}
+                          </Button>
+                          <Button className="rounded-full mr-1" variant="secondary">
+                            <Grab className="mr-2 h-4 w-4" />
+                            {publication.stats.totalAmountOfCollects}
+                          </Button>
+                        </div>
+                      </div>
+                    </a>
+                  ))
+                }
           </div>
         </div>
       )}
