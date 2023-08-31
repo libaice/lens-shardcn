@@ -1,4 +1,4 @@
-Mocked For Nader Lens-shad cn Project
+Mocked From Nader Lens-shad cn Project
 
 Tech stack
     1. Next js
@@ -8,6 +8,4 @@ Tech stack
     5. Web3Model
 
 
-
-
-    ![Uploading image.png…]()
+![image](https://github.com/libaice/lens-shardcn/assets/48044642/03338363-5b4d-4044-816d-c75b4cd569df)
